@@ -1,24 +1,10 @@
-# Module 8: D3 Scales
+# D3 Scales
 
-## Overview
 In this module, we'll explore how **scales** allow you to translate from a _data space_ to a _visual space_. As you know, your datasets will rarely (never) be in pixels. Scales will provide you with functions that allow you to express your data in pixels, regardless of the **domain** of your data.
 
 It's important to distinguish between **scales** and **axes**. For the the sake of this (and other) modules, **scales** will refer to _functions_ that translate between the data space and visual space. **Axes** are visual representations of scales, in that they allow your audience to translate from a visual space back into a data space. Not surprisingly, you'll need to use your scales to build your axes.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Contents**
-
-- [Resources](#resources)
-- [Conceptual Overview](#conceptual-overview)
-- [Linear Scales](#linear-scales)
-- [Ordinal Scales](#ordinal-scales)
-- [Color Scales](#color-scales)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## Resources
-Here are a few resources to help you better understand and use scales.
+Helpful links
 
 - [Quantitative Scales](https://github.com/mbostock/d3/wiki/Quantitative-Scales) _(d3 wiki)_
 - [Ordinal Scales](https://github.com/mbostock/d3/wiki/Ordinal-Scales) _(d3 wiki)_
@@ -107,7 +93,7 @@ d3.set(jobs).values(); // returns ['camp counselor', 'accountant']
 ## Quantitative Scales
 Quantitative scales allow you to translate between a continuous _data-domain_ and a continuous _output-range_. Let's imagine an example dataset where you had summer internship salaries that ranged from $0 to $10K (**data domain**). If you wanted to represent those using horizontal position you would want to express that set of values in a limited number of pixels, say 0 - 600 pixels (**output range**). To do this, you would use the `d3.scale` method to create a linear scale function. Before we dive into the syntax, here is a visual representation of the role of quantitative scales (code is in [demo-1](demo-1)):
 
-![image of the role of quantitative scales](imgs/quantitative-scale.png)
+![image of the role of quantitative scales](m13-imgs/quantitative-scale.png)
 
 Here is the code used to define your scale object and set the necessary inputs (domain and range):
 
@@ -142,7 +128,7 @@ salaryScale(5000); // returns 300, the center of the range
 ## Ordinal Scales
 Ordinal scales allow you to translate between a discrete _data-domain_ and a discrete _output-range_. Let's imagine an example dataset where you had an array of data of the letters `A` through `J` (**data domain**). If you wanted to represent those using horizontal position you would want to express each value between, say, 0 - 600 pixels (**output range**). To do this, you would use the `d3.scale` method to create an ordinal scale function. Before we dive into the syntax, here is a visual representation of the role of ordinal scales (code is in [demo-2](demo-2)):
 
-![image of the role of ordinal scales](imgs/ordinal-scale.png)
+![image of the role of ordinal scales](m13-imgs/ordinal-scale.png)
 
 Defining an ordinal scale with D3 is similar to creating a linear scale, however there are a few more options for describing the behavior of the range. In order to set your **domain**, you'll need to provide the full set of possible values for your scale (i.e., each discrete value):
 
@@ -208,7 +194,7 @@ colorScale(0); // returns red
 
 Here is a visual representation of the color transformation (code is in [demo-3](demo-3)):
 
-![image of the role of linear color scales](imgs/linear-color-scale.png)
+![image of the role of linear color scales](m13-imgs/linear-color-scale.png)
 
 Similarly, if you want to leverage an ordinal scale to have color outputs, you can specify the desired colors in the `range` method:
 
@@ -270,7 +256,7 @@ For practice rendering an axis alongside the data being displayed, see [exercise
 ### Positioning Axes
 The second challenge of working with axes is figuring out where to put them. Like other D3 elements, you'll need to specify the location of the `g` element in which you render your scale. Here is an [example](https://bl.ocks.org/mbostock/3019563) that suggests a convention for specifying the margin for your chart:
 
-![margin convention for d3 charts](imgs/margin-convention.png)
+![margin convention for d3 charts](m13-imgs/margin-convention.png)
 
 **Note**, the charting area (i.e., where all of your data symbols are rendered) is inside of an inner `g` element within you `svg`. This allows you to easily shift all of your markers without changing your scales. For example:
 
