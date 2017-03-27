@@ -251,7 +251,7 @@ var axisLabel = svg.append("g") // append a `g` element
                     .call(axis); // Call the axis in the context of the g element
 
 ```
-For practice rendering an axis alongside the data being displayed, see [exercise-1](exercise-1).
+For practice rendering an axis alongside the data being displayed, see [exercise-1](http://github.com/info474-s17/m13-scales/tree/master/exercise-1).
 
 ### Positioning Axes
 The second challenge of working with axes is figuring out where to put them. Like other D3 elements, you'll need to specify the location of the `g` element in which you render your scale. Here is an [example](https://bl.ocks.org/mbostock/3019563) that suggests a convention for specifying the margin for your chart:
@@ -282,4 +282,4 @@ svg.append('text')
   .text('Gross Domestic Product in 2014 (2005 USD)');
 ```
 
-To practice bringing these skills together on a real dataset, see [exercise-2](exercise-2).
+To practice bringing these skills together on a real dataset, see [exercise-2](http://github.com/info474-s17/m13-scales/tree/master/exercise-2).
