@@ -1,5 +1,5 @@
 // Main JavaScript File
-'use strict';
+"use strict";
 
 // Set domain and range for the scale
 var domain = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
