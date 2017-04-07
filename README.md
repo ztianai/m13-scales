@@ -6,16 +6,11 @@ It's important to distinguish between **scales** and **axes**. For the the sake 
 
 Helpful links
 
-- [Quantitative Scales](https://github.com/mbostock/d3/wiki/Quantitative-Scales) _(d3 wiki)_
-- [Ordinal Scales](https://github.com/mbostock/d3/wiki/Ordinal-Scales) _(d3 wiki)_
-- [Categorical Colors](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors) _(d3 wiki)_
-- [Scale Tutorial](http://alignedleft.com/tutorials/d3/scales) _(aligned left)_
-- [Scale Overview](http://www.jeromecukier.net/blog/2011/08/11/d3-scales-and-color/) _(Jerome Cukier)_
-- [D3 Array Manipulation](https://github.com/mbostock/d3/wiki/Arrays) _(d3 wiki)_
-- [D3 min Function](https://github.com/mbostock/d3/wiki/Arrays#d3_min) _(d3 wiki)_
-- [D3 set values](https://github.com/mbostock/d3/wiki/Arrays#set_values) _(d3 wiki)_
-- [D3 Categorical Colors](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors) _(d3 wiki)_
-- [D3 SVG Axes](https://github.com/mbostock/d3/wiki/SVG-Axes) _(d3 wiki)_
+- [Continuous Scales](https://github.com/d3/d3-scale/blob/master/README.md#continuous-scales) _(d3 wiki)_
+- [Ordinal Scales](https://github.com/d3/d3-scale/blob/master/README.md#ordinal-scales) _(d3 wiki)_
+- [Color Schemes](https://github.com/d3/d3-scale/blob/master/README.md#schemeCategory10) _(d3 wiki)_
+- [D3 Array Methods](https://github.com/d3/d3-array) _(d3 GitHub)_
+- [D3 Axes](https://github.com/d3/d3/blob/master/API.md#axes-d3-axis) _(d3 wiki)_
 - [D3 Margin Convention](https://bl.ocks.org/mbostock/3019563) _(bl.ock example)_
 
 ## Conceptual Overview
@@ -99,7 +94,7 @@ Here is the code used to define your scale object and set the necessary inputs (
 
 ```javascript
 // Define a linear scale object
-var salaryScale = d3.scale.linear();
+var salaryScale = d3.scaleLinear();
 
 // Set the domain of the input data for your scale
 salaryScale.domain([0, 10000]);
@@ -108,7 +103,7 @@ salaryScale.domain([0, 10000]);
 salaryScale.range([0, 600]);
 
 // With method-chaining, you could do all of the above steps in one sequence
-var salaryScale = d3.scale.linear().domain([0, 10000]).range([0, 600]);
+var salaryScale = d3.scaleLinear().domain([0, 10000]).range([0, 600]);
 ```
 
 Once you have defined your scale function, you can pass in a value in your **data domain** and it will return a value in your **output range**. Using the pixel value returned by the function, you could then build your chart.
@@ -137,7 +132,7 @@ Defining an ordinal scale with D3 is similar to creating a linear scale, however
 var data = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 // Define an ordinal scale
-var ordScale = d3.scale.ordinal();
+var ordScale = d3.scaleOrdinal();
 
 // Set the domain of possible values
 ordScale.domain(data); // pass in the full array of possible values
@@ -154,7 +149,7 @@ var data = ['A', 'B', 'C'];
 var range = [100, 200, 300]
 
 // Define ordaial scale
-var ordScale = d3.scale.ordinal().domain(data).range(range);
+var ordScale = d3.scaleOrdinal().domain(data).range(range);
 
 // Get pixel position for the letter 'B'
 ordScale('B'); // returns 200
@@ -166,7 +161,7 @@ However, as you can imagine, this gets tedious quickly, especially as your data 
 var data = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 // Define an ordinal scale and its domain
-var ordScale = d3.scale.ordinal().domain(data);
+var ordScale = d3.scaleOrdinal().domain(data);
 
 // Use the rangePoints method to set your range
 ordScale.rangePoints([0, 100]); // Set the interval with no padding
@@ -186,7 +181,7 @@ D3's ability to translate from data attributes to visual attributes, not surpris
 var data = [0, .2, .5, 1];
 
 // Define a linear color scale
-var colorScale = d3.scale.linear().domain(data).range('red', 'blue');
+var colorScale = d3.scaleLinear().domain(data).range('red', 'blue');
 
 // Get a color value
 colorScale(0); // returns red
@@ -206,20 +201,20 @@ var data = ['A', 'B', 'C'];
 var range = ['red', 'green', 'blue']
 
 // Define ordaial scale
-var colorScale = d3.scale.ordinal().domain(data).range(range);
+var colorScale = d3.scaleOrdinal().domain(data).range(range);
 
 // Get color for the letter 'C'
 colorScale('C') // returns 'blue'
 ```
 
-D3 also provides some wonderful built in categorical color scales. While you can explicitly set the domain of these scale, they will dynamically set the domain as you pass in new elements to the scale.
+D3 also provides some wonderful built in categorical color palettes. You can use these to retrieve colors for nominal values:
 
 ```javascript
 // Declare a new ordinal scale with pre-set color range
-var colorScale = d3.scale.category10();
+var colors = d3.schemeCategory10();
 
 // Get a color for an arbitrary piece of data passed to the scale
-colorScale('A') // returns the first value in the range, '#1f77b4'
+colors[0] // returns the first value in the range, '#1f77b4'
 ```
 
 These preset category scales are a great resource, but don't rely too heavily on them - they _are not_ the proper visual encoding for many dataset.
@@ -240,9 +235,8 @@ Here is an example of how you could define and render an axis:
 
 ```javascript
 // Define an axis for your scale with the ticks oriented on the bottom
-var axis = d3.svg.axis() //define your axis function
-                 .scale(scale) // sets the domain and range based on the domain/range of the scale
-                 .orient('bottom'); // but ticks below the axis line
+var axis = d3.axisBottom() // define your axis function, oriented on the bottom
+                 .scale(scale); // sets the domain and range based on the domain/range of the scale                 
 
 // Create a visual (g) element in which you want to render your axis
 var axisLabel = svg.append("g") // append a `g` element
