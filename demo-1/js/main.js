@@ -25,18 +25,17 @@ $(function() {
              .attr("transform", "translate(" + padding.left + "," + padding.top + ")"); // shift from left and top
 
   // Declare a scale for displaying the domain
-  var topScale = d3.scale.linear().domain(domain).range(topRange);
+  var topScale = d3.scaleLinear().domain(domain).range(topRange);
 
   // Declare a scale the shows the range (you won't typically do this)
-  var middleScale = d3.scale.linear().domain(domain).range(middleRange);
+  var middleScale = d3.scaleLinear().domain(domain).range(middleRange);
 
   // Declare a scale showing the "function" in between domain and range
-  var bottomScale = d3.scale.linear().domain(domain).range(bottomRange);
+  var bottomScale = d3.scaleLinear().domain(domain).range(bottomRange);
 
   // Create an axis for the domain
-  var topAxis = d3.svg.axis()
+  var topAxis = d3.axisTop()
                       .scale(topScale)
-                      .orient('top')
                       .tickFormat(d3.format('.2s')); // 2 significant digits
 
   // Append rangeAxis to svg
@@ -45,9 +44,8 @@ $(function() {
                       .call(topAxis);
 
   // Create an axis for the function
-  var middleAxis = d3.svg.axis()
+  var middleAxis = d3.axisTop()
                          .scale(middleScale)
-                         .orient('top')
                          .ticks(0) // no ticks
                          .tickFormat(""); // don't display these values
 
@@ -59,9 +57,8 @@ $(function() {
 
 
   // Create an axis for the function
-  var bottomAxis = d3.svg.axis()
+  var bottomAxis = d3.axisBottom()
                          .scale(bottomScale)
-                         .orient('bottom')
                          .tickFormat(function(d){
                            return bottomScale(d) + 'px'
                          }); // Show as pixels
@@ -101,10 +98,10 @@ $(function() {
                     .attr('y', height + padding.top + padding.bottom - 5)
                     .attr('class', 'axis-label');
   // Define color scale
-  var colors = d3.scale.category10();
+  var colors = d3.schemeCategory10;
 
   // Line interpolater
-  var line = d3.svg.line().interpolate('cardinal')
+  var line = d3.line();
 
   // Path drawing function for displaying line
   var path = function(d) {
@@ -122,21 +119,23 @@ $(function() {
 
     // Return ther interpolation of the data
     return line(lineData);
+    console.log(lineData)
   }
+
   // Bind data
   var draw = function(data) {
     var paths = g.selectAll('.path')
                  .data(data);
+    console.log(data)
 
     // Enter new paths
-    paths.enter().append("path");
-
-    // Draw paths
-    paths.attr('d', function(d){return path(d)})
+    paths.enter().append("path")
+        .merge(paths)
+         .attr('d', function(d){console.log(path(d));return path(d)})
          .attr('class', 'path')
          .style('fill', 'none')
          .style("opacity", 0.4)
-         .style("stroke", function(d) {return colors(d)});
+         .style("stroke", function(d, i) {return colors[i]});
 
     // Remove paths
     paths.exit().remove()
