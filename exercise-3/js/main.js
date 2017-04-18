@@ -7,16 +7,16 @@ $(function() {
         var type = 'binge';
 
         // Filter data down
-        var data = allData.filter(function(d) {
-                return d.type == type && d.sex == sex
-            })
-            // Sort the data alphabetically
-            // Hint: http://stackoverflow.com/questions/6712034/sort-array-by-firstname-alphabetically-in-javascript
-            .sort(function(a, b) {
-                if (a.state_name < b.state_name) return -1;
-                if (a.state_name > b.state_name) return 1;
-                return 0;
-            });
+        // var data = allData.filter(function(d) {
+        //         return d.type == type && d.sex == sex
+        //     })
+        //     // Sort the data alphabetically
+        //     // Hint: http://stackoverflow.com/questions/6712034/sort-array-by-firstname-alphabetically-in-javascript
+        //     .sort(function(a, b) {
+        //         if (a.state_name < b.state_name) return -1;
+        //         if (a.state_name > b.state_name) return 1;
+        //         return 0;
+        //     });
 
         // Margin: how much space to put in the SVG for axes/titles
         var margin = {
@@ -104,16 +104,16 @@ $(function() {
             // Set the domain/range of your yScale
             yScale.range([drawHeight, 0])
                 .domain([0, yMax]);
-        }
+        };
 
         var setAxes = function(){
             xAxis.scale(xScale);
 
             yAxis.scale(yScale);
 
-            xAxisLabel.call(xAxis);
+            xAxisLabel.transition().duration(1500).call(xAxis);
 
-            yAxisLabel.call(yAxis);
+            yAxisLabel.transition().duration(1500).call(yAxis);
 
             xAxisText.text('State');
             yAxisText.text('Percent Drinking (' + sex + ', ' + type + ')');
@@ -147,19 +147,27 @@ $(function() {
             setAxes();
             var bars = g.selectAll('rect').data(data);
             bars.enter().append('rect')
-            .attr('x', function(d) {
-                return xScale(d.state);
-            })
-            .attr('class', 'bar')
-            .on('mouseover', tip.show)
-            .on('mouseout', tip.hide)
-            .attr('width', xScale.bandwidth())
-            .attr('y', function(d) {
-                return yScale(d.percent);
-            })
-            .attr('height', function(d) {
-                return drawHeight - yScale(d.percent);
-            });
+                .attr('x', function(d) {
+                    return xScale(d.state);
+                })
+                .attr('y', function(d){
+                    return drawHeight;
+                })
+                .attr('height', 0)
+                .attr('class', 'bar')
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
+                .attr('width', xScale.bandwidth())
+                .merge(bars)
+                .transition()
+                .duration(500)
+                .delay(function(d){return xScale(d.state)})
+                .attr('y', function(d) {
+                    return yScale(d.percent);
+                })
+                .attr('height', function(d) {
+                    return drawHeight - yScale(d.percent);
+                })
 
             bars.exit().remove();
         };
@@ -184,10 +192,17 @@ $(function() {
         //         return drawHeight - yScale(d.percent);
         //     });
 
-        var filterData = function(){
-            var currentData = allData.filter(function(d){
-                return d.type == type && d.sex == sex;
-            })
+        var filterData = function() {
+            var currentData = allData.filter(function(d) {
+                    return d.type == type && d.sex == sex
+                })
+                // Sort the data alphabetically
+                // Hint: http://stackoverflow.com/questions/6712034/sort-array-by-firstname-alphabetically-in-javascript
+                .sort(function(a, b) {
+                    if (a.state_name < b.state_name) return -1;
+                    if (a.state_name > b.state_name) return 1;
+                    return 0;
+                });
             return currentData;
         };
 
