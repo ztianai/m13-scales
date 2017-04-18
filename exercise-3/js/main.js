@@ -66,8 +66,12 @@ $(function() {
             .attr('transform', 'translate(' + (margin.left - 40) + ',' + (margin.top + drawHeight / 2) + ') rotate(-90)')
             .attr('class', 'title');
 
+
+
         // Define xAxis using d3.axisBottom(). Scale will be set in the setAxes function.
         var xAxis = d3.axisBottom();
+
+
 
         // Define yAxis using d3.axisLeft(). Scale will be set in the setAxes function.
         var yAxis = d3.axisLeft()
@@ -80,44 +84,56 @@ $(function() {
         var yScale = d3.scaleLinear();
 
 
-        // Get the unique values of states for the domain of your x scale
-        var states = data.map(function(d) {
-            return d.state;
-        });
+        var setScales = function(data){
+            
+            // Get the unique values of states for the domain of your x scale
+            var states = data.map(function(d) {
+                return d.state;
+            });
+            // Set the domain/range of your xScale
+            xScale.range([0, drawWidth])
+                .padding(0.1)
+                .domain(states);
+            // Get min/max values of the percent data (for your yScale domain)
+            var yMin = d3.min(data, function(d) {
+                return +d.percent;
+            });
+            var yMax = d3.max(data, function(d) {
+                return +d.percent;
+            });
+            // Set the domain/range of your yScale
+            yScale.range([drawHeight, 0])
+                .domain([0, yMax]);
+        }
 
-        // Set the domain/range of your xScale
-        xScale.range([0, drawWidth])
-            .padding(0.1)
-            .domain(states);
+        var setAxes = function(){
+            xAxis.scale(xScale);
 
-        // Get min/max values of the percent data (for your yScale domain)
-        var yMin = d3.min(data, function(d) {
-            return +d.percent;
-        });
+            yAxis.scale(yScale);
 
-        var yMax = d3.max(data, function(d) {
-            return +d.percent;
-        });
+            xAxisLabel.call(xAxis);
 
-        // Set the domain/range of your yScale
-        yScale.range([drawHeight, 0])
-            .domain([0, yMax]);
+            yAxisLabel.call(yAxis);
+
+            xAxisText.text('State');
+            yAxisText.text('Percent Drinking (' + sex + ', ' + type + ')');
+        };
 
         // Set the scale of your xAxis object
-        xAxis.scale(xScale);
+        // xAxis.scale(xScale);
 
         // Set the scale of your yAxis object
-        yAxis.scale(yScale);
+        // yAxis.scale(yScale);
 
         // Render (call) your xAxis in your xAxisLabel
-        xAxisLabel.call(xAxis);
+        // xAxisLabel.call(xAxis);
 
         // Render (call) your yAxis in your yAxisLabel
-        yAxisLabel.call(yAxis);
+        // yAxisLabel.call(yAxis);
 
         // Update xAxisText and yAxisText labels
-        xAxisText.text('State');
-        yAxisText.text('Percent Drinking (' + sex + ', ' + type + ')');
+        // xAxisText.text('State');
+        // yAxisText.text('Percent Drinking (' + sex + ', ' + type + ')');
 
 
         // Add tip
@@ -126,12 +142,11 @@ $(function() {
         });
         g.call(tip);
 
-        // Store the data-join in a function: make sure to set the scales and update the axes in your function.
-        // Select all rects and bind data
-        var bars = g.selectAll('rect').data(data);
-
-        // Use the .enter() method to get your entering elements, and assign initial positions
-        bars.enter().append('rect')
+        var draw = function(data){
+            setScales(data);
+            setAxes();
+            var bars = g.selectAll('rect').data(data);
+            bars.enter().append('rect')
             .attr('x', function(d) {
                 return xScale(d.state);
             })
@@ -145,5 +160,47 @@ $(function() {
             .attr('height', function(d) {
                 return drawHeight - yScale(d.percent);
             });
+
+            bars.exit().remove();
+        };
+
+        // Store the data-join in a function: make sure to set the scales and update the axes in your function.
+        // Select all rects and bind data
+        // var bars = g.selectAll('rect').data(data);
+
+        // Use the .enter() method to get your entering elements, and assign initial positions
+        // bars.enter().append('rect')
+        //     .attr('x', function(d) {
+        //         return xScale(d.state);
+        //     })
+        //     .attr('class', 'bar')
+        //     .on('mouseover', tip.show)
+        //     .on('mouseout', tip.hide)
+        //     .attr('width', xScale.bandwidth())
+        //     .attr('y', function(d) {
+        //         return yScale(d.percent);
+        //     })
+        //     .attr('height', function(d) {
+        //         return drawHeight - yScale(d.percent);
+        //     });
+
+        var filterData = function(){
+            var currentData = allData.filter(function(d){
+                return d.type == type && d.sex == sex;
+            })
+            return currentData;
+        };
+
+        $("input").on('change', function(){
+            var value = $(this).val();
+            var isSex = $(this).hasClass('sex');
+            if(isSex) sex = value;
+            else type = value;
+
+            var currentData = filterData();
+            draw(currentData);
+        });
+        var currentData = filterData();
+        draw(currentData);
     });
 });
